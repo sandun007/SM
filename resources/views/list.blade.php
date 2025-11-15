@@ -45,7 +45,10 @@
                             </td>
                             <td class='text-center'>
                                 <button class='btn btn-info btn-sm' title='View'>View</button>
-                                <a href="{{route('edit',$student->id)}}" class='btn btn-warning btn-sm' title='Update'>Update</a>
+                                <button type="button" class="btn btn-warning btn-sm"
+                                        onclick="loadUpdateForm({{ $student->id }})">
+                                    Update
+                                </button>
                                 <a href="{{route('delete',$student->id)}}" class='btn btn-danger btn-sm' title='Delete'>Delete</a>
                             </td>
                         </tr>
@@ -61,14 +64,14 @@
      aria-labelledby="registerModalLabel" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-content shadow rounded-3 overflow-hidden">
 
-            <div class="modal-header bg-gradient bg-primary text-white border-0 py-4 position-relative">
-                <div class="position-absolute start-0 top-0 h-100 w-100 opacity-10">
-                </div>
-                <h5 class="modal-title fs-4 fw-bold align-self-center" id="registerModalLabel">
-                    Student Registration
-                </h5>
+            <div class="modal-header border-0 py-4 position-relative overflow-hidden d-flex justify-content-center align-items-center" style="min-height:80px;">
+                <div class="position-absolute start-0 top-0 w-100 h-100"
+                     style="background:url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=1350&q=80') center/cover;"></div>
+                <div class="position-absolute start-0 top-0 w-100 h-100"></div>
+
+                <h5 class="modal-title fs-4 fw-bold text-white mb-0" style="z-index:1;">Student Registration</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
@@ -81,7 +84,32 @@
     </div>
 </div>
 
+<div class="modal fade" id="updateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow rounded-3 overflow-hidden">
 
+            <div class="modal-header border-0 py-4 position-relative overflow-hidden d-flex justify-content-center align-items-center" style="min-height:80px;">
+                <div class="position-absolute start-0 top-0 w-100 h-100"
+                     style="background:url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=1350&q=80') center/cover;"></div>
+                <div class="position-absolute start-0 top-0 w-100 h-100"></div>
+
+                <h5 class="modal-title fs-4 fw-bold text-white mb-0" style="z-index:1;">Update Student</h5>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 me-3 mt-3"
+                        data-bs-dismiss="modal" style="z-index:1;"></button>
+            </div>
+
+            <div id="updateModalBody">
+                <div class="modal-body p-4">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="{{asset('assets/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
@@ -96,6 +124,65 @@
             row.style.display = text.includes(filter) ? '' : 'none';
         });
     });
+
+    const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+
+    function loadUpdateForm(id) {
+        const container = document.getElementById('updateModalBody');
+        container.innerHTML = `
+            <div class="modal-body p-4">
+                <div class="text-center">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+            </div>`;
+        updateModal.show();
+
+        fetch(`{{ url('/') }}/update-form/${id}`)
+            .then(r => r.text())
+            .then(html => {
+                container.innerHTML = html;
+
+                // Re-attach form submit after load
+                const form = container.querySelector('form');
+                if (form) {
+                    form.addEventListener('submit', handleUpdateSubmit);
+                }
+            });
+    }
+
+    function handleUpdateSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: data,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: res.message,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    }).then(() => {
+                        updateModal.hide();
+                        location.reload();
+                    });
+                } else {
+                    const errorMsg = Object.values(res.errors || {}).flat().join(', ');
+                    Swal.fire('Oops!', errorMsg, 'error');
+                }
+            })
+            .catch(() => {
+                Swal.fire('Error!', 'Something went wrong.', 'error');
+            });
+    }
 
 </script>
 

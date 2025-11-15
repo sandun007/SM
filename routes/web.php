@@ -21,3 +21,5 @@ Route::get('list/{id}',[AdminController::class,'delete'])->name('delete');
 Route::get('update/{id}',[AdminController::class,'edit'])->name('edit');
 Route::post('update',[AdminController::class,'update'])->name('update');
 
+Route::get('update-form/{id}', [AdminController::class, 'editForm'])->name('update.form');
+

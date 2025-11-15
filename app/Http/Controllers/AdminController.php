@@ -64,22 +64,27 @@ class AdminController extends Controller
 
     public function update(Request $request)
     {
-        try {
-            Student::query()
-                ->where('id',$request->id)
-                ->update([
-                    'name'=>$request->name,
-                    'email'=>$request->email,
-                    'age'=>$request->age,
-                    'course'=>$request->course,
-                ]);
+        $request->validate([
+            'name'   => 'required|string|max:255',
+            'email'  => 'required|email|unique:students,email,' . $request->id,
+            'age'    => 'required|integer|min:1|max:100',
+            'course' => 'required|string|max:255',
+        ]);
 
-            return redirect()->route('list');
+        // ← USE THIS LINE (either one)
+        Student::where('id', $request->id)
+            ->update($request->only(['name', 'email', 'age', 'course']));
 
-        }
-        catch (Exception $e) {
-            return $e;
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Student updated successfully!'
+        ]);
+    }
+
+    public function editForm($id)
+    {
+        $student = Student::findOrFail($id);
+        return view('update', compact('student'));
     }
 }
 

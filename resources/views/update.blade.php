@@ -2,6 +2,11 @@
 <html lang="en">
 
 <body class="bg-light">
+<div class="modal-body p-4 p-md-5 bg-light">
+    <div class="text-center mb-4">
+        <i class="bi bi-pencil-square text-warning" style="font-size:2.5rem;"></i>
+        <p class="text-muted mt-2">Edit student details</p>
+    </div>
 
     <form action="{{route('update')}}" method="POST">
         @csrf
@@ -22,8 +27,11 @@
             <label for="course" class="form-label">Course</label>
             <input type="text" class="form-control" id="course" name="course" value="{{$student->course}}" required>
         </div>
-        <button type="submit" class="btn btn-warning w-100">Update</button>
+        <div class="modal-footer bg-light border-0 px-0 pt-4 mt-4 justify-content-between">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning">Update Student</button>
+        </div>
     </form>
-
+</div>
 </body>
 </html>
