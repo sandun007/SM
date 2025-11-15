@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use Exception;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -32,7 +33,7 @@ class AdminController extends Controller
             return redirect()->route('list');
 
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return $e;
         }
     }
@@ -46,7 +47,7 @@ class AdminController extends Controller
 
             return redirect()->route('list');
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return $e;
         }
 
@@ -76,7 +77,7 @@ class AdminController extends Controller
             return redirect()->route('list');
 
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return $e;
         }
     }
