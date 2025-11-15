@@ -89,5 +89,11 @@ class AdminController extends Controller
         $student = Student::findOrFail($id);
         return view('update', compact('student'));
     }
+
+    public function viewForm($id)
+    {
+        $student = Student::findOrFail($id);
+        return view('partials.view-student', compact('student'));
+    }
 }
 

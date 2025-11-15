@@ -45,7 +45,10 @@
                                 Age: {{ $student->age }} | Course: {{ $student->course }}
                             </td>
                             <td class='text-center'>
-                                <button class='btn btn-info btn-sm' title='View'>View</button>
+                                <button type="button" class="btn btn-info btn-sm"
+                                        onclick="viewStudent({{ $student->id }})">
+                                    View
+                                </button>
                                 <button type="button" class="btn btn-warning btn-sm"
                                         onclick="loadUpdateForm({{ $student->id }})">
                                     Update
@@ -103,6 +106,33 @@
             </div>
 
             <div id="updateModalBody">
+                <div class="modal-body p-4">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow rounded-3 overflow-hidden">
+
+            <div class="modal-header border-0 py-4 position-relative overflow-hidden d-flex justify-content-center align-items-center" style="min-height:80px;">
+                <div class="position-absolute start-0 top-0 w-100 h-100"
+                     style="background:url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=1350&q=80') center/cover;"></div>
+                <div class="position-absolute start-0 top-0 w-100 h-100"></div>
+
+                <h5 class="modal-title fs-5 fw-bold text-dark mb-0" style="z-index:1;">
+                    Student Details
+                </h5>
+            </div>
+
+            <div id="viewModalBody">
                 <div class="modal-body p-4">
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status">
@@ -237,6 +267,29 @@
             }
         });
     }
+
+    const viewModal = new bootstrap.Modal(document.getElementById('viewModal'));
+
+    function viewStudent(id) {
+        const container = document.getElementById('viewModalBody');
+        container.innerHTML = `
+        <div class="modal-body p-4">
+            <div class="text-center">
+                <div class="spinner-border text-primary"></div>
+            </div>
+        </div>`;
+        viewModal.show();
+
+        fetch(`{{ url('/') }}/view-form/${id}`)
+            .then(r => r.text())
+            .then(html => {
+                container.innerHTML = html;
+            })
+            .catch(() => {
+                container.innerHTML = '<p class="text-danger text-center">Failed to load.</p>';
+            });
+    }
+
 </script>
 
 
