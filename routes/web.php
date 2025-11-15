@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/',[AdminController::class,'register'])->name('register');
 Route::get('list',[AdminController::class,'list'])->name('list');
 Route::post('list',[AdminController::class,'store'])->name('store');
-Route::get('list/{id}',[AdminController::class,'delete'])->name('delete');
 Route::get('update/{id}',[AdminController::class,'edit'])->name('edit');
 Route::post('update',[AdminController::class,'update'])->name('update');
 
 Route::get('update-form/{id}', [AdminController::class, 'editForm'])->name('update.form');
+Route::delete('list/{id}', [AdminController::class, 'delete'])->name('delete');
 

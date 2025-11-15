@@ -41,16 +41,19 @@ class AdminController extends Controller
     public function delete($id)
     {
         try {
-            Student::query()
-                ->where('id',$id)
-                ->delete();
+            $student = Student::findOrFail($id);
+            $student->delete();
 
-            return redirect()->route('list');
+            return response()->json([
+                'success' => true,
+                'message' => 'Student deleted successfully!'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete student.'
+            ], 500);
         }
-        catch (Exception $e) {
-            return $e;
-        }
-
     }
 
     public function edit($id)

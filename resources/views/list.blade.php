@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student List</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -37,7 +38,7 @@
                     </thead>
                     <tbody id="studentsBody">
                     @foreach($students as $student)
-                        <tr>
+                        <tr data-id="{{ $student->id }}">
                             <td><strong>{{ $student->name }}</strong></td>
                             <td>
                                 <small class='text-muted'>{{ $student->email }}</small><br>
@@ -49,7 +50,10 @@
                                         onclick="loadUpdateForm({{ $student->id }})">
                                     Update
                                 </button>
-                                <a href="{{route('delete',$student->id)}}" class='btn btn-danger btn-sm' title='Delete'>Delete</a>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="deleteStudent({{ $student->id }})">
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -184,7 +188,57 @@
             });
     }
 
+    function deleteStudent(id) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`{{ url('/') }}/list/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.success) {
+                            // Remove row from table
+                            document.querySelector(`tr[data-id="${id}"]`).remove();
+
+                            // Show colored toast
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                background: '#28a745',
+                                color: 'white',
+                                iconColor: 'white'
+                            });
+                            Toast.fire({
+                                icon: 'success',
+                                title: res.message
+                            });
+                        } else {
+                            Swal.fire('Error!', res.message || 'Failed to delete.', 'error');
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire('Error!', 'Something went wrong.', 'error');
+                    });
+            }
+        });
+    }
 </script>
+
 
 </body>
 </html>
