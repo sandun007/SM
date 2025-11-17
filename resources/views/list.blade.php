@@ -102,7 +102,8 @@
 
                 <h5 class="modal-title fs-4 fw-bold text-white mb-0" style="z-index:1;">Update Student</h5>
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 me-3 mt-3"
-                        data-bs-dismiss="modal" style="z-index:1;"></button>
+                        data-bs-dismiss="modal" style="z-index:1;">
+                </button>
             </div>
 
             <div id="updateModalBody">
