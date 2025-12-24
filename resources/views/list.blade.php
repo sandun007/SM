@@ -161,7 +161,6 @@
     });
 
     const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
-
     function loadUpdateForm(id) {
         const container = document.getElementById('updateModalBody');
         container.innerHTML = `
