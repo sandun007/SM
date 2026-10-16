@@ -21,7 +21,7 @@
             <label for="course" class="form-label">Course</label>
             <input type="text" class="form-control" id="course" name="course" required>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Register </button>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
     </form>
 
 </body>
